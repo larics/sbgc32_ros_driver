@@ -115,32 +115,36 @@ catkin_package(
 set(PATH_TO_SOURCES sbgc32-serial-api/sources)
 set(PATH_TO_DRIVERS sbgc32-serial-api/drivers/LinuxDriver)
 
-file(GLOB_RECURSE SBGC_INCLUDE "${PATH_TO_SOURCES}/*.h" "${PATH_TO_DRIVERS}/*.h")
-
 include_directories(
  include
   ${catkin_INCLUDE_DIRS}
-  ${PATH_TO_DRIVERS}
-  ${PATH_TO_SOURCES}
 )
 
-
-add_library(sbgc32_lib
+add_library(sbgc32_wrapper
         ${PATH_TO_DRIVERS}/driver_Linux.c
+        ${PATH_TO_DRIVERS}/driver_Linux.h
         ${PATH_TO_SOURCES}/adjvar/adjvar.c
+        ${PATH_TO_SOURCES}/adjvar/adjvar.h
         ${PATH_TO_SOURCES}/calib/calib.c
         ${PATH_TO_SOURCES}/calib/calib.h
         ${PATH_TO_SOURCES}/core/core.c
+        ${PATH_TO_SOURCES}/core/core.h
         ${PATH_TO_SOURCES}/eeprom/eeprom.c
+        ${PATH_TO_SOURCES}/eeprom/eeprom.h
         ${PATH_TO_SOURCES}/gimbalControl/gimbalControl.c
+        ${PATH_TO_SOURCES}/gimbalControl/gimbalControl.h
         ${PATH_TO_SOURCES}/imu/imu.c
+        ${PATH_TO_SOURCES}/imu/imu.h
         ${PATH_TO_SOURCES}/profiles/profiles.c
+        ${PATH_TO_SOURCES}/profiles/profiles.h
         ${PATH_TO_SOURCES}/realtime/realtime.c
+        ${PATH_TO_SOURCES}/realtime/realtime.h
         ${PATH_TO_SOURCES}/service/service.c
-        ${SBGC_INCLUDE})
-
-add_library(sbgc32_wrapper src/sbgc32_wrapper.cpp)
-target_link_libraries(sbgc32_wrapper sbgc32_lib)
+        ${PATH_TO_SOURCES}/service/service.h
+        src/sbgc32_wrapper.cpp)
+target_include_directories(sbgc32_wrapper PRIVATE ${PATH_TO_DRIVERS})
+target_include_directories(sbgc32_wrapper PRIVATE ${PATH_TO_SOURCES})
+set_property(TARGET sbgc32_wrapper PROPERTY CXX_STANDARD 11)
 
 add_executable(sbgc32_node src/sbgc32_node.cpp)
 target_link_libraries(sbgc32_node sbgc32_wrapper ${catkin_LIBRARIES})

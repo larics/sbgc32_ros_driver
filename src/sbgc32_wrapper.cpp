@@ -1,45 +1,24 @@
 #include <sbgc32_ros_driver/sbgc32_wrapper.hpp>
+#include <driver_Linux.h>
+#include <gimbalControl/gimbalControl.h>
+#include <profiles/profiles.h>
+#include <realtime/realtime.h>
+#include <service/service.h>
 
-SBGC32Wrapper::SBGC32Wrapper() {
-  SBGC_1.Drv = malloc(sizeof(Driver_t));
-  DriverInit(SBGC_1.Drv, SBGC_SERIAL_PORT);
+GeneralSBGC_t       SBGC_1;
+ConfirmationState_t Confirm;
+Control_t           Control;
+ControlConfig_t     ControlConfig;
+BoardInfo_t         BoardInfo;
+BoardInfo3_t        BoardInfo3;
+MainParams3_t       MainParams3;
+MainParamsExt_t     MainParamsExt;
+MainParamsExt2_t    MainParamsExt2;
+MainParamsExt3_t    MainParamsExt3;
+RealTimeData_t      RealTimeData;
+BeeperSettings_t    BeeperSettings;
 
-  /* High Layer Init */
-  SBGC32_DefaultInit(&SBGC_1, PortTransmitData, PortReceiveByte, GetAvailableBytes, PrintDebugData, GetTimeMs, SBGC_PROTOCOL_V2);
-
-
-  /* - - - - - - - - - High Layer Software Init - - - - - - - - - - */
-
-  ControlConfig.AxisCC[ROLL].angleLPF  = 6;
-  ControlConfig.AxisCC[PITCH].angleLPF = 7;
-  ControlConfig.AxisCC[YAW].angleLPF   = 7;
-
-  ControlConfig.AxisCC[ROLL].angleLPF  = 6;
-  ControlConfig.AxisCC[PITCH].speedLPF = 7;
-  ControlConfig.AxisCC[YAW].speedLPF   = 7;
-  ControlConfig.flags                  = RTCCF_CONTROL_CONFIG_FLAG_NO_CONFIRM;
-
-  Control.controlMode[ROLL]  = CtrlM_MODE_ANGLE | CtrlF_CONTROL_FLAG_TARGET_PRECISE;
-  Control.controlMode[PITCH] = CtrlM_MODE_ANGLE | CtrlF_CONTROL_FLAG_TARGET_PRECISE;
-  Control.controlMode[YAW]   = CtrlM_MODE_ANGLE | CtrlF_CONTROL_FLAG_TARGET_PRECISE;
-
-  Control.AxisC[ROLL].angle  = 0;
-  Control.AxisC[PITCH].angle = 0;
-  Control.AxisC[YAW].angle   = 0;
-
-  Control.AxisC[PITCH].speed = 500;
-  Control.AxisC[YAW].speed   = 500;
-
-  /* SBGC32_Reset(&SBGC_1, RF_RESET_WITH_RESTORING_STATES, 500);
-   *     SBGC32_CheckConfirmation(&SBGC_1, &Confirm, CMD_RESET);
-   *         sleep(5); */
-
-  SBGC32_ControlConfig(&SBGC_1, &ControlConfig, &Confirm);
-
-  PrintBoardParameters(&SBGC_1, P_CURRENT_PROFILE);
-}
-
-TxRxStatus_t SBGC32Wrapper::PrintBoardParameters(GeneralSBGC_t* generalSBGC, Profile_t slot) {
+TxRxStatus_t PrintBoardParameters(GeneralSBGC_t* generalSBGC, Profile_t slot) {
 
   SBGC32_ReadBoardInfo(generalSBGC, &BoardInfo, 0);
   SBGC32_ReadBoardInfo3(generalSBGC, &BoardInfo3);
@@ -106,7 +85,46 @@ TxRxStatus_t SBGC32Wrapper::PrintBoardParameters(GeneralSBGC_t* generalSBGC, Pro
   return generalSBGC->_ParserCurrentStatus;
 }
 
-void SBGC32Wrapper::SetPitchYaw(double pitch_deg, double yaw_deg) {
+void init_gimbal() {
+  SBGC_1.Drv = malloc(sizeof(Driver_t));
+  DriverInit(SBGC_1.Drv, SBGC_SERIAL_PORT);
+
+  /* High Layer Init */
+  SBGC32_DefaultInit(&SBGC_1, PortTransmitData, PortReceiveByte, GetAvailableBytes, PrintDebugData, GetTimeMs, SBGC_PROTOCOL_V2);
+
+
+  /* - - - - - - - - - High Layer Software Init - - - - - - - - - - */
+
+  ControlConfig.AxisCC[ROLL].angleLPF  = 6;
+  ControlConfig.AxisCC[PITCH].angleLPF = 7;
+  ControlConfig.AxisCC[YAW].angleLPF   = 7;
+
+  ControlConfig.AxisCC[ROLL].angleLPF  = 6;
+  ControlConfig.AxisCC[PITCH].speedLPF = 7;
+  ControlConfig.AxisCC[YAW].speedLPF   = 7;
+  ControlConfig.flags                  = RTCCF_CONTROL_CONFIG_FLAG_NO_CONFIRM;
+
+  Control.controlMode[ROLL]  = CtrlM_MODE_ANGLE | CtrlF_CONTROL_FLAG_TARGET_PRECISE;
+  Control.controlMode[PITCH] = CtrlM_MODE_ANGLE | CtrlF_CONTROL_FLAG_TARGET_PRECISE;
+  Control.controlMode[YAW]   = CtrlM_MODE_ANGLE | CtrlF_CONTROL_FLAG_TARGET_PRECISE;
+
+  Control.AxisC[ROLL].angle  = 0;
+  Control.AxisC[PITCH].angle = 0;
+  Control.AxisC[YAW].angle   = 0;
+
+  Control.AxisC[PITCH].speed = 500;
+  Control.AxisC[YAW].speed   = 500;
+
+  /* SBGC32_Reset(&SBGC_1, RF_RESET_WITH_RESTORING_STATES, 500);
+   *     SBGC32_CheckConfirmation(&SBGC_1, &Confirm, CMD_RESET);
+   *         sleep(5); */
+
+  SBGC32_ControlConfig(&SBGC_1, &ControlConfig, &Confirm);
+
+  PrintBoardParameters(&SBGC_1, P_CURRENT_PROFILE);
+}
+
+void set_gimbal_pitch_yaw(double pitch_deg, double yaw_deg) {
   Control.AxisC[YAW].angle   = DEGREE_TO_ANGLE_INT(yaw_deg);
   Control.AxisC[PITCH].angle = DEGREE_TO_ANGLE_INT(pitch_deg);
   SBGC32_Control(&SBGC_1, &Control);
