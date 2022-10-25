@@ -7,7 +7,8 @@ project(sbgc32_ros_driver)
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED
+  roscpp)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -111,10 +112,38 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
+set(PATH_TO_SOURCES sbgc32-serial-api/sources)
+set(PATH_TO_DRIVERS sbgc32-serial-api/drivers/LinuxDriver)
+
+file(GLOB_RECURSE SBGC_INCLUDE "${PATH_TO_SOURCES}/*.h" "${PATH_TO_DRIVERS}/*.h")
+
 include_directories(
-# include
-# ${catkin_INCLUDE_DIRS}
+ include
+  ${catkin_INCLUDE_DIRS}
+  ${PATH_TO_DRIVERS}
+  ${PATH_TO_SOURCES}
 )
+
+
+add_library(sbgc32_lib
+        ${PATH_TO_DRIVERS}/driver_Linux.c
+        ${PATH_TO_SOURCES}/adjvar/adjvar.c
+        ${PATH_TO_SOURCES}/calib/calib.c
+        ${PATH_TO_SOURCES}/calib/calib.h
+        ${PATH_TO_SOURCES}/core/core.c
+        ${PATH_TO_SOURCES}/eeprom/eeprom.c
+        ${PATH_TO_SOURCES}/gimbalControl/gimbalControl.c
+        ${PATH_TO_SOURCES}/imu/imu.c
+        ${PATH_TO_SOURCES}/profiles/profiles.c
+        ${PATH_TO_SOURCES}/realtime/realtime.c
+        ${PATH_TO_SOURCES}/service/service.c
+        ${SBGC_INCLUDE})
+
+add_library(sbgc32_wrapper src/sbgc32_wrapper.cpp)
+target_link_libraries(sbgc32_wrapper sbgc32_lib)
+
+add_executable(sbgc32_node src/sbgc32_node.cpp)
+target_link_libraries(sbgc32_node sbgc32_wrapper ${catkin_LIBRARIES})
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
@@ -150,43 +179,25 @@ include_directories(
 ## Install ##
 #############
 
-# all install targets should use catkin DESTINATION variables
-# See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
+# Mark executables and/or libraries for installation
+install(
+  TARGETS sbgc32_wrapper sbgc32_node
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
-## Mark executable scripts (Python etc.) for installation
-## in contrast to setup.py, you can choose the destination
-# catkin_install_python(PROGRAMS
-#   scripts/my_python_script
-#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+# Mark cpp header files for installation
+install(DIRECTORY include/${PROJECT_NAME}/ DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
 
-## Mark executables for installation
-## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_executables.html
-# install(TARGETS ${PROJECT_NAME}_node
-#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-# )
+# Mark launch folder for installation
+# install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-## Mark libraries for installation
-## See http://docs.ros.org/melodic/api/catkin/html/howto/format1/building_libraries.html
-# install(TARGETS ${PROJECT_NAME}
-#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-#   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
-# )
+# Mark config folder for installation
+# install(DIRECTORY config DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
-## Mark cpp header files for installation
-# install(DIRECTORY include/${PROJECT_NAME}/
-#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#   FILES_MATCHING PATTERN "*.h"
-#   PATTERN ".svn" EXCLUDE
-# )
-
-## Mark other files for installation (e.g. launch and bag files, etc.)
-# install(FILES
-#   # myfile1
-#   # myfile2
-#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
-# )
+# Mark all the *.xml files for installation
+install(FILES package.xml
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 #############
 ## Testing ##
