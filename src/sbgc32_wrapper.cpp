@@ -5,18 +5,18 @@
 #include <realtime/realtime.h>
 #include <service/service.h>
 
-GeneralSBGC_t       SBGC_1;
-ConfirmationState_t Confirm;
-Control_t           Control;
-ControlConfig_t     ControlConfig;
-BoardInfo_t         BoardInfo;
-BoardInfo3_t        BoardInfo3;
-MainParams3_t       MainParams3;
-MainParamsExt_t     MainParamsExt;
-MainParamsExt2_t    MainParamsExt2;
-MainParamsExt3_t    MainParamsExt3;
-RealTimeData_t      RealTimeData;
-BeeperSettings_t    BeeperSettings;
+static GeneralSBGC_t       SBGC_1;
+static ConfirmationState_t Confirm;
+static Control_t           Control;
+static ControlConfig_t     ControlConfig;
+static BoardInfo_t         BoardInfo;
+static BoardInfo3_t        BoardInfo3;
+static MainParams3_t       MainParams3;
+static MainParamsExt_t     MainParamsExt;
+static MainParamsExt2_t    MainParamsExt2;
+static MainParamsExt3_t    MainParamsExt3;
+static RealTimeData_t      RealTimeData;
+static BeeperSettings_t    BeeperSettings;
 
 TxRxStatus_t PrintBoardParameters(GeneralSBGC_t* generalSBGC, Profile_t slot) {
 

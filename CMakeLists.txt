@@ -120,7 +120,8 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_library(sbgc32_wrapper
+set(CMAKE_BUILD_TYPE Debug)
+add_library(sbgc32_wrapper STATIC
         ${PATH_TO_DRIVERS}/driver_Linux.c
         ${PATH_TO_DRIVERS}/driver_Linux.h
         ${PATH_TO_SOURCES}/adjvar/adjvar.c
