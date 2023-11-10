@@ -1,3 +1,3 @@
 [submodule "sbgc32-serial-api"]
 	path = sbgc32-serial-api
-	url = https://github.com/basecamelectronics/sbgc32-serial-api
+	url = https://github.com/larics/sbgc32-serial-api
