@@ -121,6 +121,9 @@ include_directories(
 )
 
 set(CMAKE_BUILD_TYPE Debug)
+if(NOT SBGC_SERIAL_PORT)
+  set(SBGC_SERIAL_PORT "/dev/ttyUSB0")
+endif()
 add_library(sbgc32_wrapper STATIC
         ${PATH_TO_DRIVERS}/driver_Linux.c
         ${PATH_TO_DRIVERS}/driver_Linux.h
@@ -146,6 +149,7 @@ add_library(sbgc32_wrapper STATIC
 target_include_directories(sbgc32_wrapper PRIVATE ${PATH_TO_DRIVERS})
 target_include_directories(sbgc32_wrapper PRIVATE ${PATH_TO_SOURCES})
 set_property(TARGET sbgc32_wrapper PROPERTY CXX_STANDARD 11)
+target_compile_definitions(sbgc32_wrapper PRIVATE "SBGC_SERIAL_PORT=\"${SBGC_SERIAL_PORT}\"")
 
 add_executable(sbgc32_node src/sbgc32_node.cpp)
 target_link_libraries(sbgc32_node sbgc32_wrapper ${catkin_LIBRARIES})
@@ -216,3 +220,6 @@ install(FILES package.xml
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+# Unset cache so we can go back to using the default value
+unset(SBGC_SERIAL_PORT CACHE)

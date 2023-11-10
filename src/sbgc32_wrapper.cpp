@@ -4,6 +4,7 @@
 #include <profiles/profiles.h>
 #include <realtime/realtime.h>
 #include <service/service.h>
+#include <iostream>
 
 static GeneralSBGC_t       SBGC_1;
 static ConfirmationState_t Confirm;
@@ -87,6 +88,7 @@ TxRxStatus_t PrintBoardParameters(GeneralSBGC_t* generalSBGC, Profile_t slot) {
 
 void init_gimbal() {
   SBGC_1.Drv = malloc(sizeof(Driver_t));
+  std::cout << "Connecting to serial port: " << SBGC_SERIAL_PORT<< "\n";
   DriverInit(SBGC_1.Drv, SBGC_SERIAL_PORT);
 
   /* High Layer Init */
