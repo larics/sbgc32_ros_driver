@@ -18,6 +18,7 @@ static MainParamsExt2_t    MainParamsExt2;
 static MainParamsExt3_t    MainParamsExt3;
 static RealTimeData_t      RealTimeData;
 static BeeperSettings_t    BeeperSettings;
+static RealTimeDataCustom_t	RealTimeDataCustom;
 
 TxRxStatus_t PrintBoardParameters(GeneralSBGC_t* generalSBGC, Profile_t slot) {
 
@@ -131,4 +132,38 @@ void set_gimbal_pitch_yaw(double pitch_deg, double yaw_deg) {
   Control.AxisC[PITCH].angle = DEGREE_TO_ANGLE_INT(pitch_deg);
   SBGC32_Control(&SBGC_1, &Control);
 }
+
+void get_real_time_data() {
+    RealTimeDataCustomFlags_t CustomFlags;
+    CustomFlags = static_cast<RealTimeDataCustomFlags_t>(RealTimeDataCustomFlags_t::RTDCF_ACC_DATA | RealTimeDataCustomFlags_t::RTDCF_GYRO_DATA);;
+
+    SBGC32_RequestRealTimeDataCustom(&SBGC_1, &RealTimeDataCustom, CustomFlags);
+}
+
+int get_acc_roll() {
+    return RealTimeDataCustom.ACC_Data[ROLL];
+}
+
+int get_acc_pitch() {
+    return RealTimeDataCustom.ACC_Data[PITCH];
+}
+
+int get_acc_yaw() {
+    return RealTimeDataCustom.ACC_Data[YAW];
+}
+
+int get_gyro_roll() {
+    return RealTimeDataCustom.gyroData[ROLL];
+}
+
+int get_gyro_pitch() {
+    return RealTimeDataCustom.gyroData[PITCH];
+}
+
+int get_gyro_yaw() {
+    return RealTimeDataCustom.gyroData[YAW];
+}
+
+
+
 
