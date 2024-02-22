@@ -9,7 +9,7 @@ void callback(const geometry_msgs::Vector3Stamped& msg) {
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "sbgc32_node");
-  int rate = 1000;
+  int rate = 100;
   init_gimbal();
   ros::NodeHandle nh;
   auto            sub = nh.subscribe("sbgc32/target", 1, &callback);
@@ -30,6 +30,7 @@ int main(int argc, char** argv) {
       imu_msg.angular_velocity.y = get_gyro_pitch();
       imu_msg.angular_velocity.z = get_gyro_yaw();
 
+      imu_pub.publish(imu_msg);
       loop_rate.sleep();
   }
   return 0;
