@@ -1,26 +1,26 @@
-#include <sbgc32_ros_driver/sbgc32_wrapper.hpp>
 #include <driver_Linux.h>
 #include <gimbalControl/gimbalControl.h>
+#include <iostream>
 #include <profiles/profiles.h>
 #include <realtime/realtime.h>
+#include <sbgc32_ros_driver/sbgc32_wrapper.hpp>
 #include <service/service.h>
-#include <iostream>
 
-static GeneralSBGC_t       SBGC_1;
+static GeneralSBGC_t SBGC_1;
 static ConfirmationState_t Confirm;
-static Control_t           Control;
-static ControlConfig_t     ControlConfig;
-static BoardInfo_t         BoardInfo;
-static BoardInfo3_t        BoardInfo3;
-static MainParams3_t       MainParams3;
-static MainParamsExt_t     MainParamsExt;
-static MainParamsExt2_t    MainParamsExt2;
-static MainParamsExt3_t    MainParamsExt3;
-static RealTimeData_t      RealTimeData;
-static BeeperSettings_t    BeeperSettings;
-static RealTimeDataCustom_t	RealTimeDataCustom;
+static Control_t Control;
+static ControlConfig_t ControlConfig;
+static BoardInfo_t BoardInfo;
+static BoardInfo3_t BoardInfo3;
+static MainParams3_t MainParams3;
+static MainParamsExt_t MainParamsExt;
+static MainParamsExt2_t MainParamsExt2;
+static MainParamsExt3_t MainParamsExt3;
+static RealTimeData_t RealTimeData;
+static BeeperSettings_t BeeperSettings;
+static RealTimeDataCustom_t RealTimeDataCustom;
 
-TxRxStatus_t PrintBoardParameters(GeneralSBGC_t* generalSBGC, Profile_t slot) {
+TxRxStatus_t PrintBoardParameters(GeneralSBGC_t *generalSBGC, Profile_t slot) {
 
   SBGC32_ReadBoardInfo(generalSBGC, &BoardInfo, 0);
   SBGC32_ReadBoardInfo3(generalSBGC, &BoardInfo3);
@@ -45,79 +45,113 @@ TxRxStatus_t PrintBoardParameters(GeneralSBGC_t* generalSBGC, Profile_t slot) {
   PrintMessage(generalSBGC, TEXT_SIZE_(firmwareVersionStr));
   PrintMessage(generalSBGC, TEXT_SIZE_(" \n"));
 
-  PrintStructElement(generalSBGC, &BoardInfo3.flashSize, "Flash Size =", _UNSIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &BoardInfo3.flashSize,
+                     "Flash Size =", _UNSIGNED_CHAR_);
 
-  PrintStructElement(generalSBGC, &MainParams3.profileID + 1, "Current profile #", _UNSIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &MainParams3.profileID + 1,
+                     "Current profile #", _UNSIGNED_CHAR_);
 
-  PrintStructElement(generalSBGC, &MainParams3.AxisCMP3[ROLL].p, "Roll P =", _UNSIGNED_CHAR_);
-  PrintStructElement(generalSBGC, &MainParams3.AxisCMP3[ROLL].i, "Roll I =", _UNSIGNED_CHAR_);
-  PrintStructElement(generalSBGC, &MainParams3.AxisCMP3[ROLL].d, "Roll D =", _UNSIGNED_CHAR_);
-  PrintStructElement(generalSBGC, &MainParams3.AxisCMP3[PITCH].p, "Pitch P =", _UNSIGNED_CHAR_);
-  PrintStructElement(generalSBGC, &MainParams3.AxisCMP3[PITCH].i, "Pitch I =", _UNSIGNED_CHAR_);
-  PrintStructElement(generalSBGC, &MainParams3.AxisCMP3[PITCH].d, "Pitch D =", _UNSIGNED_CHAR_);
-  PrintStructElement(generalSBGC, &MainParams3.AxisCMP3[YAW].p, "Yaw P =", _UNSIGNED_CHAR_);
-  PrintStructElement(generalSBGC, &MainParams3.AxisCMP3[YAW].i, "Yaw I =", _UNSIGNED_CHAR_);
-  PrintStructElement(generalSBGC, &MainParams3.AxisCMP3[YAW].d, "Yaw D =", _UNSIGNED_CHAR_);
-  PrintStructElement(generalSBGC, &MainParams3.ACC_LimiterAll, "ACC Limiter all = ", _UNSIGNED_CHAR_);
-  PrintStructElement(generalSBGC, &MainParams3.AxisRC_MP3[ROLL].RC_MaxAngle, "RC Max Angle =", _SIGNED_SHORT_);
-  PrintStructElement(generalSBGC, &MainParams3.AxisRC_MP3[YAW].RC_MinAngle, "RC Min Angle =", _SIGNED_SHORT_);
-  PrintStructElement(generalSBGC, &MainParams3.RC_MapROLL, "RC Map ROLL =", _UNSIGNED_CHAR_);
-  PrintStructElement(generalSBGC, &MainParams3.RC_MapPITCH, "RC_MapPITCH =", _UNSIGNED_CHAR_);
-  PrintStructElement(generalSBGC, &MainParams3.RC_MapYAW, "RC_MapYAW =", _UNSIGNED_CHAR_);
-  PrintStructElement(generalSBGC, &MainParams3.RC_MapCmd, "RC_MapCmd =", _UNSIGNED_CHAR_);
-  PrintStructElement(generalSBGC, &MainParams3.RC_MapFC_ROLL, "RC_MapFC_ROLL =", _UNSIGNED_CHAR_);
-  PrintStructElement(generalSBGC, &MainParams3.RC_MapFC_PITCH, "RC_MapFC_PITCH =", _UNSIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &MainParams3.AxisCMP3[ROLL].p,
+                     "Roll P =", _UNSIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &MainParams3.AxisCMP3[ROLL].i,
+                     "Roll I =", _UNSIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &MainParams3.AxisCMP3[ROLL].d,
+                     "Roll D =", _UNSIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &MainParams3.AxisCMP3[PITCH].p,
+                     "Pitch P =", _UNSIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &MainParams3.AxisCMP3[PITCH].i,
+                     "Pitch I =", _UNSIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &MainParams3.AxisCMP3[PITCH].d,
+                     "Pitch D =", _UNSIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &MainParams3.AxisCMP3[YAW].p,
+                     "Yaw P =", _UNSIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &MainParams3.AxisCMP3[YAW].i,
+                     "Yaw I =", _UNSIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &MainParams3.AxisCMP3[YAW].d,
+                     "Yaw D =", _UNSIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &MainParams3.ACC_LimiterAll,
+                     "ACC Limiter all = ", _UNSIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &MainParams3.AxisRC_MP3[ROLL].RC_MaxAngle,
+                     "RC Max Angle =", _SIGNED_SHORT_);
+  PrintStructElement(generalSBGC, &MainParams3.AxisRC_MP3[YAW].RC_MinAngle,
+                     "RC Min Angle =", _SIGNED_SHORT_);
+  PrintStructElement(generalSBGC, &MainParams3.RC_MapROLL,
+                     "RC Map ROLL =", _UNSIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &MainParams3.RC_MapPITCH,
+                     "RC_MapPITCH =", _UNSIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &MainParams3.RC_MapYAW,
+                     "RC_MapYAW =", _UNSIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &MainParams3.RC_MapCmd,
+                     "RC_MapCmd =", _UNSIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &MainParams3.RC_MapFC_ROLL,
+                     "RC_MapFC_ROLL =", _UNSIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &MainParams3.RC_MapFC_PITCH,
+                     "RC_MapFC_PITCH =", _UNSIGNED_CHAR_);
 
-  PrintStructElement(generalSBGC, &MainParamsExt.LPF_Freq[ROLL], "ROLL LPF Frequency =", _UNSIGNED_SHORT_);
-  PrintStructElement(generalSBGC, &MainParamsExt.LPF_Freq[PITCH], "PITCH LPF Frequency =", _UNSIGNED_SHORT_);
-  PrintStructElement(generalSBGC, &MainParamsExt.LPF_Freq[YAW], "YAW LPF Frequency =", _UNSIGNED_SHORT_);
+  PrintStructElement(generalSBGC, &MainParamsExt.LPF_Freq[ROLL],
+                     "ROLL LPF Frequency =", _UNSIGNED_SHORT_);
+  PrintStructElement(generalSBGC, &MainParamsExt.LPF_Freq[PITCH],
+                     "PITCH LPF Frequency =", _UNSIGNED_SHORT_);
+  PrintStructElement(generalSBGC, &MainParamsExt.LPF_Freq[YAW],
+                     "YAW LPF Frequency =", _UNSIGNED_SHORT_);
 
-  PrintStructElement(generalSBGC, &MainParamsExt2.frameIMU_LPF_Freq, "Timelapse Time =", _UNSIGNED_CHAR_);
-  PrintStructElement(generalSBGC, &MainParamsExt2.timelapseTime, "Timelapse Time =", _UNSIGNED_SHORT_);
+  PrintStructElement(generalSBGC, &MainParamsExt2.frameIMU_LPF_Freq,
+                     "Timelapse Time =", _UNSIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &MainParamsExt2.timelapseTime,
+                     "Timelapse Time =", _UNSIGNED_SHORT_);
 
-  PrintStructElement(generalSBGC, &MainParamsExt3.motorStartupDelay, "Motor Startup Delay =", _UNSIGNED_SHORT_);
+  PrintStructElement(generalSBGC, &MainParamsExt3.motorStartupDelay,
+                     "Motor Startup Delay =", _UNSIGNED_SHORT_);
 
   PrintMessage(generalSBGC, TEXT_SIZE_(" \n"));
-  PrintStructElement(generalSBGC, &RealTimeData.frameCamAngle[ROLL], "Roll Current Angle =", _SIGNED_SHORT_);
-  PrintStructElement(generalSBGC, &RealTimeData.frameCamAngle[PITCH], "Pitch Current Angle =", _SIGNED_SHORT_);
-  PrintStructElement(generalSBGC, &RealTimeData.frameCamAngle[YAW], "Yaw Current Angle =", _SIGNED_SHORT_);
+  PrintStructElement(generalSBGC, &RealTimeData.frameCamAngle[ROLL],
+                     "Roll Current Angle =", _SIGNED_SHORT_);
+  PrintStructElement(generalSBGC, &RealTimeData.frameCamAngle[PITCH],
+                     "Pitch Current Angle =", _SIGNED_SHORT_);
+  PrintStructElement(generalSBGC, &RealTimeData.frameCamAngle[YAW],
+                     "Yaw Current Angle =", _SIGNED_SHORT_);
 
-  PrintStructElement(generalSBGC, &RealTimeData.IMU_Temperature, "IMU Temperature =", _SIGNED_CHAR_);
+  PrintStructElement(generalSBGC, &RealTimeData.IMU_Temperature,
+                     "IMU Temperature =", _SIGNED_CHAR_);
 
   return generalSBGC->_ParserCurrentStatus;
 }
 
 void init_gimbal() {
   SBGC_1.Drv = malloc(sizeof(Driver_t));
-  std::cout << "Connecting to serial port: " << SBGC_SERIAL_PORT<< "\n";
+  std::cout << "Connecting to serial port: " << SBGC_SERIAL_PORT << "\n";
   DriverInit(SBGC_1.Drv, SBGC_SERIAL_PORT);
 
   /* High Layer Init */
-  SBGC32_DefaultInit(&SBGC_1, PortTransmitData, PortReceiveByte, GetAvailableBytes, PrintDebugData, GetTimeMs, SBGC_PROTOCOL_V2);
-
+  SBGC32_DefaultInit(&SBGC_1, PortTransmitData, PortReceiveByte,
+                     GetAvailableBytes, PrintDebugData, GetTimeMs,
+                     SBGC_PROTOCOL_V2);
 
   /* - - - - - - - - - High Layer Software Init - - - - - - - - - - */
 
-  ControlConfig.AxisCC[ROLL].angleLPF  = 6;
+  ControlConfig.AxisCC[ROLL].angleLPF = 6;
   ControlConfig.AxisCC[PITCH].angleLPF = 7;
-  ControlConfig.AxisCC[YAW].angleLPF   = 7;
+  ControlConfig.AxisCC[YAW].angleLPF = 7;
 
-  ControlConfig.AxisCC[ROLL].angleLPF  = 6;
+  ControlConfig.AxisCC[ROLL].angleLPF = 6;
   ControlConfig.AxisCC[PITCH].speedLPF = 7;
-  ControlConfig.AxisCC[YAW].speedLPF   = 7;
-  ControlConfig.flags                  = RTCCF_CONTROL_CONFIG_FLAG_NO_CONFIRM;
+  ControlConfig.AxisCC[YAW].speedLPF = 7;
+  ControlConfig.flags = RTCCF_CONTROL_CONFIG_FLAG_NO_CONFIRM;
 
-  Control.controlMode[ROLL]  = CtrlM_MODE_ANGLE | CtrlF_CONTROL_FLAG_TARGET_PRECISE;
-  Control.controlMode[PITCH] = CtrlM_MODE_ANGLE | CtrlF_CONTROL_FLAG_TARGET_PRECISE;
-  Control.controlMode[YAW]   = CtrlM_MODE_ANGLE | CtrlF_CONTROL_FLAG_TARGET_PRECISE;
+  Control.controlMode[ROLL] =
+      CtrlM_MODE_ANGLE | CtrlF_CONTROL_FLAG_TARGET_PRECISE;
+  Control.controlMode[PITCH] =
+      CtrlM_MODE_ANGLE | CtrlF_CONTROL_FLAG_TARGET_PRECISE;
+  Control.controlMode[YAW] =
+      CtrlM_MODE_ANGLE | CtrlF_CONTROL_FLAG_TARGET_PRECISE;
 
-  Control.AxisC[ROLL].angle  = 0;
+  Control.AxisC[ROLL].angle = 0;
   Control.AxisC[PITCH].angle = 0;
-  Control.AxisC[YAW].angle   = 0;
+  Control.AxisC[YAW].angle = 0;
 
   Control.AxisC[ROLL].speed = 500;
   Control.AxisC[PITCH].speed = 500;
-  Control.AxisC[YAW].speed   = 500;
+  Control.AxisC[YAW].speed = 500;
 
   /* SBGC32_Reset(&SBGC_1, RF_RESET_WITH_RESTORING_STATES, 500);
    *     SBGC32_CheckConfirmation(&SBGC_1, &Confirm, CMD_RESET);
@@ -129,51 +163,37 @@ void init_gimbal() {
 }
 
 void set_gimbal_pitch_yaw(double pitch_deg, double yaw_deg) {
-  Control.AxisC[YAW].angle   = DEGREE_TO_ANGLE_INT(yaw_deg);
+  Control.AxisC[YAW].angle = DEGREE_TO_ANGLE_INT(yaw_deg);
   Control.AxisC[PITCH].angle = DEGREE_TO_ANGLE_INT(pitch_deg);
   SBGC32_Control(&SBGC_1, &Control);
 }
 
 void set_gimbal_roll_pitch_yaw(double roll_deg, double pitch_deg,
-  double yaw_deg)
-{
-  Control.AxisC[YAW].angle   = DEGREE_TO_ANGLE_INT(yaw_deg);
+                               double yaw_deg) {
+  Control.AxisC[YAW].angle = DEGREE_TO_ANGLE_INT(yaw_deg);
   Control.AxisC[PITCH].angle = DEGREE_TO_ANGLE_INT(pitch_deg);
   Control.AxisC[ROLL].angle = DEGREE_TO_ANGLE_INT(roll_deg);
   SBGC32_Control(&SBGC_1, &Control);
 }
 
 void get_real_time_data() {
-    RealTimeDataCustomFlags_t CustomFlags;
-    CustomFlags = static_cast<RealTimeDataCustomFlags_t>(RealTimeDataCustomFlags_t::RTDCF_ACC_DATA | RealTimeDataCustomFlags_t::RTDCF_GYRO_DATA);;
+  RealTimeDataCustomFlags_t CustomFlags;
+  CustomFlags = static_cast<RealTimeDataCustomFlags_t>(
+      RealTimeDataCustomFlags_t::RTDCF_ACC_DATA |
+      RealTimeDataCustomFlags_t::RTDCF_GYRO_DATA);
+  ;
 
-    SBGC32_RequestRealTimeDataCustom(&SBGC_1, &RealTimeDataCustom, CustomFlags);
+  SBGC32_RequestRealTimeDataCustom(&SBGC_1, &RealTimeDataCustom, CustomFlags);
 }
 
-int get_acc_roll() {
-    return RealTimeDataCustom.ACC_Data[ROLL];
-}
+int get_acc_roll() { return RealTimeDataCustom.ACC_Data[ROLL]; }
 
-int get_acc_pitch() {
-    return RealTimeDataCustom.ACC_Data[PITCH];
-}
+int get_acc_pitch() { return RealTimeDataCustom.ACC_Data[PITCH]; }
 
-int get_acc_yaw() {
-    return RealTimeDataCustom.ACC_Data[YAW];
-}
+int get_acc_yaw() { return RealTimeDataCustom.ACC_Data[YAW]; }
 
-int get_gyro_roll() {
-    return RealTimeDataCustom.gyroData[ROLL];
-}
+int get_gyro_roll() { return RealTimeDataCustom.gyroData[ROLL]; }
 
-int get_gyro_pitch() {
-    return RealTimeDataCustom.gyroData[PITCH];
-}
+int get_gyro_pitch() { return RealTimeDataCustom.gyroData[PITCH]; }
 
-int get_gyro_yaw() {
-    return RealTimeDataCustom.gyroData[YAW];
-}
-
-
-
-
+int get_gyro_yaw() { return RealTimeDataCustom.gyroData[YAW]; }
