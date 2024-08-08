@@ -115,6 +115,7 @@ void init_gimbal() {
   Control.AxisC[PITCH].angle = 0;
   Control.AxisC[YAW].angle   = 0;
 
+  Control.AxisC[ROLL].speed = 500;
   Control.AxisC[PITCH].speed = 500;
   Control.AxisC[YAW].speed   = 500;
 
@@ -130,6 +131,15 @@ void init_gimbal() {
 void set_gimbal_pitch_yaw(double pitch_deg, double yaw_deg) {
   Control.AxisC[YAW].angle   = DEGREE_TO_ANGLE_INT(yaw_deg);
   Control.AxisC[PITCH].angle = DEGREE_TO_ANGLE_INT(pitch_deg);
+  SBGC32_Control(&SBGC_1, &Control);
+}
+
+void set_gimbal_roll_pitch_yaw(double roll_deg, double pitch_deg,
+  double yaw_deg)
+{
+  Control.AxisC[YAW].angle   = DEGREE_TO_ANGLE_INT(yaw_deg);
+  Control.AxisC[PITCH].angle = DEGREE_TO_ANGLE_INT(pitch_deg);
+  Control.AxisC[ROLL].angle = DEGREE_TO_ANGLE_INT(roll_deg);
   SBGC32_Control(&SBGC_1, &Control);
 }
 

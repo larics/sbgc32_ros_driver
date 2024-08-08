@@ -4,7 +4,8 @@
 #include <sensor_msgs/Imu.h>
 
 void callback(const geometry_msgs::Vector3Stamped& msg) {
-  set_gimbal_pitch_yaw(msg.vector.y * 180 / M_PI, msg.vector.z * 180 / M_PI);
+  //set_gimbal_pitch_yaw(msg.vector.y * 180 / M_PI, msg.vector.z * 180 / M_PI);
+  set_gimbal_roll_pitch_yaw(msg.vector.x * 180 / M_PI, msg.vector.y * 180 / M_PI, msg.vector.z * 180 / M_PI);
 }
 
 int main(int argc, char** argv) {
