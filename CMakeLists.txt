@@ -122,7 +122,7 @@ include_directories(
 
 set(CMAKE_BUILD_TYPE Debug)
 if(NOT SBGC_SERIAL_PORT)
-  set(SBGC_SERIAL_PORT "/dev/ttyUSB0")
+  set(SBGC_SERIAL_PORT "/dev/ttyUSBsbgc")
 endif()
 add_library(sbgc32_wrapper STATIC
         ${PATH_TO_DRIVERS}/driver_Linux.c
